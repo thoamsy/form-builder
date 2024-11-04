@@ -40,8 +40,13 @@ export function FormBuilder() {
 
   return (
     <div className="container mx-auto py-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-3xl font-bold">{form.title}</h1>
+      <div className="mb-6 flex items-start justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">{form.title}</h1>
+          {form.description && (
+            <p className="text-muted-foreground">{form.description}</p>
+          )}
+        </div>
         <Link to={`/preview/${form.id}`}>
           <Button variant="outline">
             <Eye className="mr-2 h-4 w-4" />

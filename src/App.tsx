@@ -10,8 +10,6 @@ function Home() {
   const navigate = useNavigate();
   const { forms, addForm } = useFormStore();
 
-  console.log(forms);
-
   const handleCreateForm = () => {
     const title = `New Form ${forms.length + 1}`;
     const newForm = addForm(title);

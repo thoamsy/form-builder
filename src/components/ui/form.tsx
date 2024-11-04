@@ -81,7 +81,7 @@ const FormItem = React.forwardRef<
       <div
         ref={ref}
         className={cn(
-          'flex has-[input[type=checkbox]]:flex-row flex-col gap-2',
+          'flex has-[input[type=checkbox]]:flex-row flex-col',
           className,
         )}
         {...props}
@@ -100,7 +100,7 @@ const FormLabel = React.forwardRef<
   return (
     <Label
       ref={ref}
-      className={cn(error && 'text-destructive', className)}
+      className={cn('mb-1', error && 'text-destructive', className)}
       htmlFor={formItemId}
       {...props}
     />
