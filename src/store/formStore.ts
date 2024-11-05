@@ -1,5 +1,9 @@
 import { create, type StateCreator } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
+import {
+  createJSONStorage,
+  persist,
+  type StateStorage,
+} from 'zustand/middleware';
 import { produce } from 'immer';
 import { v4 as uuidv4 } from 'uuid';
 import type { Form, FormField } from '@/types/form';
@@ -18,6 +22,7 @@ interface FormActions {
   deleteForm: (formId: string) => void;
   setActiveForm: (formId: string) => void;
   addField: (formId: string, field: Omit<FormField, 'id'>) => void;
+  clearFields: (formId: string) => void;
   updateField: (
     formId: string,
     fieldId: string,
@@ -130,6 +135,17 @@ const storeCreator: StateCreator<FormStore, [], []> = (set) => ({
         const form = state.forms.find((form) => form.id === formId);
         if (form) {
           form.fields = form.fields.filter((field) => field.id !== fieldId);
+        }
+      }),
+    );
+  },
+
+  clearFields: (formId: string) => {
+    set(
+      produce((state: FormStore) => {
+        const form = state.forms.find((form) => form.id === formId);
+        if (form) {
+          form.fields = [];
         }
       }),
     );

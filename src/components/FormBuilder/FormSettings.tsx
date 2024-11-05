@@ -10,15 +10,15 @@ interface FormSettingsProps {
 
 export function FormSettings({ formId }: FormSettingsProps) {
   const form = useFormStore((state) =>
-    state.forms.find((f) => f.id === formId)
+    state.forms.find((f) => f.id === formId),
   );
   const updateForm = useFormStore((state) => state.updateForm);
 
   if (!form) return null;
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="shadow-none border-none border-l-2">
+      <CardHeader className="">
         <CardTitle>Form Settings</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -27,9 +27,7 @@ export function FormSettings({ formId }: FormSettingsProps) {
           <Input
             id="title"
             value={form.title}
-            onChange={(e) =>
-              updateForm(formId, { title: e.target.value })
-            }
+            onChange={(e) => updateForm(formId, { title: e.target.value })}
           />
         </div>
         <div className="space-y-2">

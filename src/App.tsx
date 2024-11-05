@@ -62,7 +62,7 @@ function Home() {
 function App() {
   return (
     <div className="w-dvw h-dvh">
-      <div className="container mx-auto py-6">
+      <div className="h-screen mx-auto">
         <Router>
           <Routes>
             <Route path="/" element={<Home />} />

@@ -29,15 +29,15 @@ export function FieldSettings({ formId, field, onClose }: FieldSettingsProps) {
   const Config = getFieldDefinition(field.type).Config;
 
   return (
-    <Card>
+    <Card className="shadow-none border-none border-r-2">
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
           <CardTitle>Field Settings</CardTitle>
           <CardDescription>Configure the selected field</CardDescription>
         </div>
         <Button
-          className="size-7"
-          variant="ghost"
+          className="size-8"
+          variant="secondary"
           size="icon"
           onClick={onClose}
         >

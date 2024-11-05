@@ -6,8 +6,7 @@ import { FieldPalette } from './FieldPalette';
 import { FormSettings } from './FormSettings';
 import { FieldSettings } from './FieldSettings';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Eye } from 'lucide-react';
+import { Eye, ListRestart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { FormField } from '@/types/form';
 
@@ -17,6 +16,8 @@ export function FormBuilder() {
     state.forms.find((f) => f.id === formId),
   );
   const setActiveForm = useFormStore((state) => state.setActiveForm);
+  const clearFields = useFormStore((state) => state.clearFields);
+
   const [selectedFieldId, setSelectedFieldId] = useState<string | null>(null);
 
   const selectedField = useMemo(
@@ -39,48 +40,54 @@ export function FormBuilder() {
   };
 
   return (
-    <>
-      <div className="mb-6 flex items-start justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">{form.title}</h1>
-          {form.description && (
-            <p className="text-muted-foreground">{form.description}</p>
-          )}
-        </div>
-        <Link to={`/preview/${form.id}`}>
-          <Button variant="outline">
-            <Eye className="mr-2 h-4 w-4" />
-            Preview Form
-          </Button>
-        </Link>
+    <div className="grid grid-cols-12 h-screen relative">
+      <div className="col-span-3 sticky overflow-y-auto top-0">
+        <FieldPalette formId={form.id} />
       </div>
 
-      <div className="grid grid-cols-12 gap-6">
-        <div className="col-span-3">
-          <FieldPalette formId={form.id} />
+      <div className="col-span-6 bg-gray-50 h-full p-6 overflow-y-auto">
+        <div className="mb-6 flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">{form.title}</h1>
+            {form.description && (
+              <p className="text-muted-foreground">{form.description}</p>
+            )}
+          </div>
+          <menu className="inline-flex gap-2">
+            <Link to={`/preview/${form.id}`}>
+              <Button size="icon" variant="outline">
+                <Eye />
+              </Button>
+            </Link>
+            <Button
+              onClick={() => {
+                clearFields(form.id);
+                setSelectedFieldId(null);
+              }}
+              size="icon"
+              variant="outline"
+            >
+              <ListRestart />
+            </Button>
+          </menu>
         </div>
-
-        <div className="col-span-6">
-          <Card className="p-6">
-            <FieldList
-              formId={form.id}
-              onFieldSelect={handleFieldSelect}
-              selectedFieldId={selectedFieldId}
-            />
-          </Card>
-        </div>
-
-        <div className="col-span-3 space-y-6">
-          <FormSettings formId={form.id} />
-          {selectedField ? (
-            <FieldSettings
-              formId={form.id}
-              field={selectedField}
-              onClose={() => setSelectedFieldId(null)}
-            />
-          ) : null}
-        </div>
+        <FieldList
+          formId={form.id}
+          onFieldSelect={handleFieldSelect}
+          selectedFieldId={selectedFieldId}
+        />
       </div>
-    </>
+
+      <div className="col-span-3 sticky top-0 overflow-y-auto">
+        <FormSettings formId={form.id} />
+        {selectedField ? (
+          <FieldSettings
+            formId={form.id}
+            field={selectedField}
+            onClose={() => setSelectedFieldId(null)}
+          />
+        ) : null}
+      </div>
+    </div>
   );
 }

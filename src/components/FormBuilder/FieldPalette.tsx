@@ -19,7 +19,7 @@ export function FieldPalette({ formId }: FieldPaletteProps) {
   const fieldTypes = getAllFieldTypes();
 
   return (
-    <Card>
+    <Card className="shadow-none border-none border-r-2">
       <CardHeader>
         <CardTitle>Field Types</CardTitle>
         <CardDescription>
