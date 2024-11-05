@@ -5,10 +5,11 @@ import { FieldList } from './FieldList';
 import { FieldPalette } from './FieldPalette';
 import { FormSettings } from './FormSettings';
 import { FieldSettings } from './FieldSettings';
-import { Button } from '@/components/ui/button';
 import { Eye, ListRestart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { FormField } from '@/types/form';
+import { IconButton } from '../icon-button';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 export function FormBuilder() {
   const { formId } = useParams<{ formId: string }>();
@@ -53,22 +54,20 @@ export function FormBuilder() {
               <p className="text-muted-foreground">{form.description}</p>
             )}
           </div>
-          <menu className="inline-flex gap-2">
-            <Link to={`/preview/${form.id}`}>
-              <Button size="icon" variant="outline">
-                <Eye />
-              </Button>
-            </Link>
-            <Button
-              onClick={() => {
-                clearFields(form.id);
-                setSelectedFieldId(null);
-              }}
-              size="icon"
-              variant="outline"
-            >
-              <ListRestart />
-            </Button>
+          <menu className="inline-flex items-center gap-2">
+            <TooltipProvider delayDuration={300}>
+              <Link to={`/preview/${form.id}`}>
+                <IconButton tooltip="Preview Form" Icon={Eye} />
+              </Link>
+              <IconButton
+                tooltip="Clear Form"
+                onClick={() => {
+                  clearFields(form.id);
+                  setSelectedFieldId(null);
+                }}
+                Icon={ListRestart}
+              />
+            </TooltipProvider>
           </menu>
         </div>
         <FieldList
