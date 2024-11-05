@@ -23,7 +23,7 @@ export function FormPreview() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="container py-6 mx-auto max-w-2xl">
       <h1 className="mb-2 text-3xl font-bold">{form.title}</h1>
       {form.description && (
         <p className="mb-6 text-muted-foreground">{form.description}</p>

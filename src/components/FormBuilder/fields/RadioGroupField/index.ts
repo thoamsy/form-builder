@@ -21,7 +21,12 @@ export const RadioGroupField: FieldDefinition<RadioGroupFieldProps> = {
   label: 'Radio Group',
   icon: Radio,
   defaultProps: {
-    options: [],
+    options: [
+      {
+        value: 'radio1',
+        label: 'Radio 1',
+      },
+    ],
     layout: 'vertical',
   },
   Renderer: RadioGroupFieldRenderer,

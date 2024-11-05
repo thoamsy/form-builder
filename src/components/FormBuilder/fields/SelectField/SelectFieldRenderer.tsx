@@ -36,7 +36,7 @@ export function SelectFieldRenderer({
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {fieldConfig.options.map((option) => (
+              {fieldConfig.options?.map((option) => (
                 <SelectItem key={option.value} value={option.value}>
                   {option.label}
                 </SelectItem>

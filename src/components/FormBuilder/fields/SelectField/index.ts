@@ -13,7 +13,6 @@ export interface SelectFieldProps extends BaseFieldProps {
   type: 'select';
   placeholder?: string;
   options: SelectOption[];
-  multiple?: boolean;
 }
 
 export const SelectField: FieldDefinition<SelectFieldProps> = {
@@ -22,13 +21,17 @@ export const SelectField: FieldDefinition<SelectFieldProps> = {
   icon: ListFilter,
   defaultProps: {
     placeholder: 'Select an option...',
-    options: [],
-    multiple: false,
+    options: [
+      {
+        value: 'option1',
+        label: 'Option 1',
+      },
+    ],
   },
   Renderer: SelectFieldRenderer,
   Config: SelectFieldConfig,
   createSchema: (field) => {
-    const baseSchema = field.multiple ? z.array(z.string()) : z.string();
+    const baseSchema = z.string();
     return field.required
       ? baseSchema.min(1, 'Required')
       : baseSchema.optional();

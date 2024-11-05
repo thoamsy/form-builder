@@ -21,7 +21,11 @@ interface FormActions {
   ) => void;
   deleteForm: (formId: string) => void;
   setActiveForm: (formId: string) => void;
-  addField: (formId: string, field: Omit<FormField, 'id'>) => void;
+  addField: (
+    formId: string,
+    field: Omit<FormField, 'id'>,
+    index?: number,
+  ) => void;
   clearFields: (formId: string) => void;
   updateField: (
     formId: string,
@@ -96,15 +100,26 @@ const storeCreator: StateCreator<FormStore, [], []> = (set) => ({
     );
   },
 
-  addField: (formId: string, field: Omit<FormField, 'id'>) => {
+  addField: (formId: string, field: Omit<FormField, 'id'>, index?: number) => {
     set(
-      produce((state: FormStore) => {
-        const form = state.forms.find((form) => form.id === formId);
-        if (form) {
-          const newField: FormField = {
-            ...field,
-            id: uuidv4(),
-          };
+      produce((state: FormState) => {
+        const formIndex = state.forms.findIndex((f) => f.id === formId);
+        if (formIndex === -1) return state;
+
+        const newField = {
+          ...field,
+          id: uuidv4(),
+        };
+
+        const form = state.forms[formIndex];
+
+        console.log('index: ', index);
+
+        if (typeof index === 'number' && index >= 0) {
+          // 在指定位置插入
+          form.fields.splice(index, 0, newField);
+        } else {
+          // 添加到末尾
           form.fields.push(newField);
         }
       }),

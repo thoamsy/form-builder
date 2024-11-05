@@ -65,14 +65,6 @@ export function SelectFieldConfig({
         />
       </div>
 
-      <div className="flex items-center justify-between">
-        <Label>Multiple Selection</Label>
-        <Switch
-          checked={field.multiple || false}
-          onCheckedChange={(checked) => onUpdate({ multiple: checked })}
-        />
-      </div>
-
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label>Options</Label>

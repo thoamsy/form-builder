@@ -34,7 +34,7 @@ export function RadioGroupFieldRenderer({
                 fieldConfig.layout === 'horizontal' ? 'flex' : 'flex flex-col',
               )}
             >
-              {fieldConfig.options.map((option) => (
+              {fieldConfig.options?.map((option) => (
                 <div key={option.value} className="flex items-center space-x-2">
                   <RadioGroupItem value={option.value} id={option.value} />
                   <Label htmlFor={option.value}>{option.label}</Label>
