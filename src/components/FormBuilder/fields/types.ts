@@ -25,7 +25,7 @@ export interface FieldDefinition<T extends BaseFieldProps = BaseFieldProps> {
   type: FieldTypes;
   label: string;
   icon: ComponentType<{ className?: string }>;
-  defaultProps: Partial<Omit<T, keyof BaseFieldProps>>;
+  defaultProps: Partial<T>;
   Renderer: ComponentType<FieldRendererProps<T>>;
   Config: ComponentType<FieldConfigProps<T>>;
   createSchema: (field: T) => z.ZodType;

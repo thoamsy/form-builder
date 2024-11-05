@@ -37,6 +37,7 @@ export function FieldPalette({ formId }: FieldPaletteProps) {
               onClick={() =>
                 addField(formId, {
                   type: fieldDef.type as FieldTypes,
+                  label: fieldDef.label,
                   ...fieldDef.defaultProps,
                 } as BaseFieldProps)
               }

@@ -6,7 +6,9 @@ import type { BaseFieldProps, FieldDefinition } from '../types';
 
 export interface DateFieldProps extends BaseFieldProps {
   type: 'date';
+  rangeMode?: boolean;
   placeholder?: string;
+  disablePast?: boolean;
   minDate?: Date;
   maxDate?: Date;
 }
@@ -16,6 +18,7 @@ export const DateField: FieldDefinition<DateFieldProps> = {
   label: 'Date Picker',
   icon: Calendar,
   defaultProps: {
+    rangeMode: false,
     placeholder: 'Pick a date...',
   },
   Renderer: DateFieldRenderer,

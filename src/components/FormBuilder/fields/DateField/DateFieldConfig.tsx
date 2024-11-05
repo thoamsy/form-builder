@@ -2,16 +2,6 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import { Calendar } from '@/components/ui/calendar';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Button } from '@/components/ui/button';
-import { CalendarIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
 import type { FieldConfigProps } from '../types';
 import type { DateFieldProps } from './index';
 
@@ -53,7 +43,23 @@ export function DateFieldConfig({
         />
       </div>
 
-      <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <Label>Range Mode</Label>
+        <Switch
+          checked={field.rangeMode || false}
+          onCheckedChange={(checked) => onUpdate({ rangeMode: checked })}
+        />
+      </div>
+
+      <div className="flex items-center justify-between">
+        <Label>Disable Past Dates</Label>
+        <Switch
+          checked={field.disablePast || false}
+          onCheckedChange={(checked) => onUpdate({ disablePast: checked })}
+        />
+      </div>
+
+      {/* <div className="space-y-2">
         <Label>Minimum Date</Label>
         <Popover>
           <PopoverTrigger asChild>
@@ -111,7 +117,7 @@ export function DateFieldConfig({
             />
           </PopoverContent>
         </Popover>
-      </div>
+      </div> */}
     </div>
   );
 }
