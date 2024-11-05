@@ -17,7 +17,7 @@ function Home() {
   };
 
   return (
-    <div className="container mx-auto py-6">
+    <>
       <div className="flex mb-6 items-center justify-between">
         <h1 className="text-3xl font-bold">My Forms</h1>
         <Button onClick={handleCreateForm}>
@@ -55,20 +55,22 @@ function Home() {
           </div>
         ))}
       </div>
-    </div>
+    </>
   );
 }
 
 function App() {
   return (
     <div className="w-dvw h-dvh">
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/builder/:formId" element={<FormBuilder />} />
-          <Route path="/preview/:formId" element={<FormPreview />} />
-        </Routes>
-      </Router>
+      <div className="container mx-auto py-6">
+        <Router>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/builder/:formId" element={<FormBuilder />} />
+            <Route path="/preview/:formId" element={<FormPreview />} />
+          </Routes>
+        </Router>
+      </div>
     </div>
   );
 }

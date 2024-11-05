@@ -7,7 +7,7 @@ import { RadioGroupField } from './RadioGroupField';
 import { TextareaField } from './TextareaField';
 import type { FieldDefinition, BaseFieldProps } from './types';
 
-const fieldTypes: Record<string, FieldDefinition<BaseFieldProps>> = {
+const fieldTypes = {
   text: TextField as FieldDefinition<BaseFieldProps>,
   number: NumberField as FieldDefinition<BaseFieldProps>,
   select: SelectField as FieldDefinition<BaseFieldProps>,
@@ -15,12 +15,14 @@ const fieldTypes: Record<string, FieldDefinition<BaseFieldProps>> = {
   date: DateField as FieldDefinition<BaseFieldProps>,
   radio: RadioGroupField as FieldDefinition<BaseFieldProps>,
   textarea: TextareaField as FieldDefinition<BaseFieldProps>,
-};
+} as const;
+
+export type FieldTypes = keyof typeof fieldTypes;
 
 export const getFieldDefinition = (
   type: string,
 ): FieldDefinition<BaseFieldProps> => {
-  const fieldDef = fieldTypes[type];
+  const fieldDef = fieldTypes[type as FieldTypes];
   if (!fieldDef) {
     throw new Error(`Field type "${type}" not found`);
   }

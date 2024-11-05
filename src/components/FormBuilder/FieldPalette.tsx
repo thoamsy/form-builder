@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { useFormStore } from '@/store/formStore';
-import { getAllFieldTypes } from './fields/registry';
+import { getAllFieldTypes, type FieldTypes } from './fields/registry';
 import type { BaseFieldProps } from './fields/types';
 
 interface FieldPaletteProps {
@@ -26,7 +26,7 @@ export function FieldPalette({ formId }: FieldPaletteProps) {
           Drag and drop or click to add fields to your form
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid grid-cols-2 gap-2">
+      <CardContent className="grid grid-cols-1 lg:grid-cols-2 gap-2">
         {fieldTypes.map((fieldDef) => {
           const Icon = fieldDef.icon;
           return (
@@ -36,7 +36,7 @@ export function FieldPalette({ formId }: FieldPaletteProps) {
               className="h-20 flex-col gap-2"
               onClick={() =>
                 addField(formId, {
-                  type: fieldDef.type,
+                  type: fieldDef.type as FieldTypes,
                   ...fieldDef.defaultProps,
                 } as BaseFieldProps)
               }

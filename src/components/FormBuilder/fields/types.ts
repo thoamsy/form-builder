@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { ComponentType } from 'react';
 import { UseFormReturn } from 'react-hook-form';
+import type { FieldTypes } from './registry';
 
 export interface BaseFieldProps {
   id: string;
@@ -21,7 +22,7 @@ export interface FieldConfigProps<T extends BaseFieldProps = BaseFieldProps> {
 }
 
 export interface FieldDefinition<T extends BaseFieldProps = BaseFieldProps> {
-  type: string;
+  type: FieldTypes;
   label: string;
   icon: ComponentType<{ className?: string }>;
   defaultProps: Partial<Omit<T, keyof BaseFieldProps>>;

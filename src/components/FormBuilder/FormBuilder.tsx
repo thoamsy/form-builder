@@ -39,7 +39,7 @@ export function FormBuilder() {
   };
 
   return (
-    <div className="container mx-auto py-6">
+    <>
       <div className="mb-6 flex items-start justify-between">
         <div>
           <h1 className="text-3xl font-bold">{form.title}</h1>
@@ -56,7 +56,11 @@ export function FormBuilder() {
       </div>
 
       <div className="grid grid-cols-12 gap-6">
-        <div className="col-span-8">
+        <div className="col-span-3">
+          <FieldPalette formId={form.id} />
+        </div>
+
+        <div className="col-span-6">
           <Card className="p-6">
             <FieldList
               formId={form.id}
@@ -66,7 +70,7 @@ export function FormBuilder() {
           </Card>
         </div>
 
-        <div className="col-span-4 space-y-6">
+        <div className="col-span-3 space-y-6">
           <FormSettings formId={form.id} />
           {selectedField ? (
             <FieldSettings
@@ -74,11 +78,9 @@ export function FormBuilder() {
               field={selectedField}
               onClose={() => setSelectedFieldId(null)}
             />
-          ) : (
-            <FieldPalette formId={form.id} />
-          )}
+          ) : null}
         </div>
       </div>
-    </div>
+    </>
   );
 }
