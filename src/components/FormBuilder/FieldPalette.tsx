@@ -6,12 +6,13 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { useFormStore } from '@/store/formStore';
 import { getAllFieldTypes } from './fields/registry';
 import { useDraggable } from '@dnd-kit/core';
 import { cn } from '@/lib/utils';
 import { memo } from 'react';
-
+import { GripVertical } from 'lucide-react';
+import type { BaseFieldProps } from './fields/types';
+import type { FieldDefinition } from './fields/types';
 interface DraggableFieldButtonProps {
   type: string;
   label: string;
@@ -31,36 +32,26 @@ function DraggableFieldButton({
     id: `${DRAGGABLE_ITEM_ID}-${type}`,
     data: {
       type,
-      isTemplate: true,
     },
   });
-
-  const handleMouseDown = () => {
-    const start = Date.now();
-
-    const handleMouseUp = () => {
-      const duration = Date.now() - start;
-      if (duration < 200) {
-        onClick();
-      }
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-
-    window.addEventListener('mouseup', handleMouseUp);
-  };
 
   return (
     <Button
       ref={setNodeRef}
       variant="outline"
-      className={cn(
-        'h-20 flex-col gap-2 touch-none',
-        isDragging && 'opacity-50 cursor-grabbing',
-      )}
+      onClick={onClick}
+      className={cn('h-20 relative flex-col gap-2 touch-none')}
       // onMouseDown={handleMouseDown}
-      {...attributes}
-      {...listeners}
     >
+      <GripVertical
+        {...attributes}
+        {...listeners}
+        className={cn(
+          '!size-7 touch-none cursor-grab p-1 rounded hover:bg-card text-muted-foreground absolute top-2 right-2',
+
+          isDragging && 'cursor-grabbing',
+        )}
+      />
       <Icon className="h-5 w-5" />
       <span className="text-xs">{label}</span>
     </Button>
@@ -68,12 +59,11 @@ function DraggableFieldButton({
 }
 
 export const FieldPalette = memo(function FieldPalette({
-  formId,
+  onClick,
 }: {
-  formId: string;
+  onClick: (fieldDef: FieldDefinition<BaseFieldProps>) => void;
 }) {
   const fieldTypes = getAllFieldTypes();
-  const addField = useFormStore((state) => state.addField);
 
   return (
     <Card className="shadow-none border-none border-r-2">
@@ -90,14 +80,7 @@ export const FieldPalette = memo(function FieldPalette({
             type={fieldDef.type}
             label={fieldDef.label}
             icon={fieldDef.icon}
-            onClick={() => {
-              return addField(formId, {
-                type: fieldDef.type,
-                label: fieldDef.label,
-                required: false,
-                ...fieldDef.defaultProps,
-              });
-            }}
+            onClick={() => onClick(fieldDef)}
           />
         ))}
       </CardContent>

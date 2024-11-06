@@ -45,8 +45,8 @@ export function DraggableField({
       <Card
         className={cn(
           'relative flex flex-col transition-shadow duration-200',
-          isDragging && 'z-50 shadow-lg opacity-50',
-          isSelected && 'ring-2 ring-primary',
+          isDragging && 'z-50 shadow-xl opacity-80 !ring-0',
+          isSelected && 'ring-2 ring-blue-400',
           className,
         )}
         style={style}

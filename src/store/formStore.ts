@@ -7,6 +7,7 @@ import {
 import { produce } from 'immer';
 import { v4 as uuidv4 } from 'uuid';
 import type { Form, FormField } from '@/types/form';
+import { arrayMove } from '@dnd-kit/sortable';
 
 interface FormState {
   forms: Form[];
@@ -25,7 +26,7 @@ interface FormActions {
     formId: string,
     field: Omit<FormField, 'id'>,
     index?: number,
-  ) => void;
+  ) => FormField;
   clearFields: (formId: string) => void;
   updateField: (
     formId: string,
@@ -100,20 +101,22 @@ const storeCreator: StateCreator<FormStore, [], []> = (set) => ({
     );
   },
 
-  addField: (formId: string, field: Omit<FormField, 'id'>, index?: number) => {
+  addField: (
+    formId: string,
+    field: Omit<FormField, 'id'>,
+    index?: number,
+  ): FormField => {
+    const newField: FormField = {
+      ...field,
+      id: uuidv4(),
+    };
+
     set(
       produce((state: FormState) => {
         const formIndex = state.forms.findIndex((f) => f.id === formId);
         if (formIndex === -1) return state;
 
-        const newField = {
-          ...field,
-          id: uuidv4(),
-        };
-
         const form = state.forms[formIndex];
-
-        console.log('index: ', index);
 
         if (typeof index === 'number' && index >= 0) {
           // 在指定位置插入
@@ -124,6 +127,8 @@ const storeCreator: StateCreator<FormStore, [], []> = (set) => ({
         }
       }),
     );
+
+    return newField;
   },
 
   updateField: (
@@ -166,13 +171,12 @@ const storeCreator: StateCreator<FormStore, [], []> = (set) => ({
     );
   },
 
-  reorderFields: (formId: string, startIndex: number, endIndex: number) => {
+  reorderFields: (formId: string, oldIndex: number, newIndex: number) => {
     set(
       produce<FormState>((state) => {
         const form = state.forms.find((form) => form.id === formId);
         if (form) {
-          const [removed] = form.fields.splice(startIndex, 1);
-          form.fields.splice(endIndex, 0, removed);
+          form.fields = arrayMove(form.fields, oldIndex, newIndex);
         }
       }),
     );

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useFormStore } from '@/store/formStore';
 import { FieldList } from './FieldList';
@@ -25,6 +25,8 @@ import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { getFieldDefinition, type FieldTypes } from './fields/registry';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { DROP_ZONE_ID } from '@/lib/constants';
+import type { FieldDefinition } from './fields/types';
+import type { BaseFieldProps } from './fields/types';
 
 const isDraggingFromPalette = (id: string) =>
   String(id).startsWith(DRAGGABLE_ITEM_ID);
@@ -40,6 +42,8 @@ export function FormBuilder() {
 
   const [selectedFieldId, setSelectedFieldId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [overItemId, setOverItemId] = useState<string | null>(null);
+
   const addField = useFormStore((state) => state.addField);
 
   const selectedField = useMemo(
@@ -54,48 +58,64 @@ export function FormBuilder() {
     }),
   );
 
-  const [activeIndex, setActiveIndex] = useState(-1);
-
   function handleDragStart(event: DragStartEvent) {
-    // setActiveId(event.active.id as string);
+    if (isDraggingFromPalette(String(event.active.id))) {
+      setActiveId(event.active.id as string);
+    } else {
+      setActiveId(null);
+    }
   }
+
+  const isInFieldLists = (id: string) => {
+    return form?.fields.some((f) => f.id === id);
+  };
 
   function handleDragOver(event: DragOverEvent) {
     const { active, over } = event;
 
     if (!over || !form) return;
 
-    // console.log(active.id, active.data.current, over);
-    // 只处理从调色板拖拽的情况
-    if (!active.data.current?.isTemplate) return;
+    if (over.id === active.id) return;
 
-    setActiveId(event.active.id as string);
-
-    // 计算拖拽位置
-    const overId = over.id;
-    let newIndex;
-
-    if (overId === DROP_ZONE_ID) {
-      // 如果拖到了容器上，放在最后
-      newIndex = form.fields.length;
+    if (
+      (activeId && isInFieldLists(String(over.id))) ||
+      over.id === DROP_ZONE_ID
+    ) {
+      setOverItemId(String(over.id));
     } else {
-      // 如果拖到了某个字段上，获取该字段的索引
-      newIndex = form.fields.findIndex((f) => f.id === overId);
-      if (newIndex === -1) newIndex = form.fields.length;
+      setOverItemId(null);
     }
-
-    setActiveIndex(newIndex);
   }
+
+  const fieldListRef = useRef<HTMLDivElement>(null);
+  const onPaletteClick = (fieldDef: FieldDefinition<BaseFieldProps>) => {
+    if (!form) return;
+
+    // 放在下一次 loop 执行
+    requestAnimationFrame(() => {
+      fieldListRef.current?.lastElementChild?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+      });
+    });
+
+    const newField = addField(form.id, {
+      type: fieldDef.type,
+      label: fieldDef.label,
+      required: false,
+      ...fieldDef.defaultProps,
+    });
+
+    setSelectedFieldId(newField.id);
+  };
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
 
     setActiveId(null);
-    setActiveIndex(-1);
+    setOverItemId(null);
 
     if (!form || !over) return;
-
-    console.log(active.id, over.id);
 
     const isDraggingFromPalette = String(active.id).startsWith(
       DRAGGABLE_ITEM_ID,
@@ -108,6 +128,19 @@ export function FormBuilder() {
       ) as FieldTypes;
       const fieldDef = getFieldDefinition(fieldType);
 
+      // 计算拖拽位置
+      const overId = over.id;
+      let newIndex;
+
+      if (overId === DROP_ZONE_ID) {
+        // 如果拖到了容器上，放在最后
+        newIndex = form.fields.length;
+      } else {
+        // 如果拖到了某个字段上，获取该字段的索引
+        newIndex = form.fields.findIndex((f) => f.id === overId);
+        if (newIndex === -1) newIndex = form.fields.length;
+      }
+
       addField(
         form.id,
         {
@@ -117,19 +150,24 @@ export function FormBuilder() {
           required: false,
           ...fieldDef.defaultProps,
         },
-        activeIndex,
+        newIndex,
       ); // 在正确的位置添加字段
       return;
     }
 
     // Handle reordering existing fields
-    if (!active.data.current?.isTemplate && active.id !== over.id) {
+    if (
+      isInFieldLists(String(active.id)) &&
+      String(active.id) !== String(over.id)
+    ) {
       const oldIndex = form.fields.findIndex((f) => f.id === active.id);
       const newIndex = form.fields.findIndex((f) => f.id === over.id);
       if (oldIndex !== -1 && newIndex !== -1) {
         reorderFields(form.id, oldIndex, newIndex);
       }
     }
+
+    setActiveId(null);
   }
 
   useEffect(() => {
@@ -163,7 +201,7 @@ export function FormBuilder() {
     >
       <div className="grid grid-cols-12 h-screen relative">
         <div className="col-span-3 sticky overflow-y-auto top-0">
-          <FieldPalette formId={form.id} />
+          <FieldPalette onClick={onPaletteClick} />
         </div>
 
         <div className="col-span-6 bg-gray-50 h-full p-6 overflow-y-auto">
@@ -191,11 +229,12 @@ export function FormBuilder() {
             </menu>
           </div>
           <FieldList
+            overItemId={overItemId}
+            ref={fieldListRef}
             form={form}
             onFieldSelect={handleFieldSelect}
             selectedFieldId={selectedFieldId}
             draggingIdFromPalette={activeId ?? ''}
-            activeIndex={activeIndex}
           />
         </div>
 
