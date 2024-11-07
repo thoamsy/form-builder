@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import { useFormStore } from '@/store/formStore';
 import { FieldList } from './FieldList';
 import { DRAGGABLE_ITEM_ID, FieldPalette } from './FieldPalette';
 import { FormSettings } from './FormSettings';
 import { FieldSettings } from './FieldSettings';
 import { Eye, ListRestart } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import type { FormField } from '@/types/form';
 import { IconButton } from '../icon-button';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -28,6 +27,7 @@ import { DROP_ZONE_ID } from '@/lib/constants';
 import type { FieldDefinition } from './fields/types';
 import type { BaseFieldProps } from './fields/types';
 import { Separator } from '@/components/ui/separator';
+import { Drawer, DrawerTrigger } from '../ui/drawer';
 
 const isDraggingFromPalette = (id: string) =>
   String(id).startsWith(DRAGGABLE_ITEM_ID);
@@ -183,6 +183,8 @@ export function FormBuilder() {
     }
   }, [selectedField]);
 
+  const navigate = useNavigate();
+
   if (!form) {
     return <div>Form not found</div>;
   }
@@ -215,9 +217,11 @@ export function FormBuilder() {
             </div>
             <menu className="inline-flex items-center gap-2">
               <TooltipProvider delayDuration={300}>
-                <Link to={`/preview/${form.id}`}>
-                  <IconButton tooltip="Preview Form" Icon={Eye} />
-                </Link>
+                <IconButton
+                  tooltip="Preview Form"
+                  onClick={() => navigate('./preview', { relative: 'path' })}
+                  Icon={Eye}
+                />
                 <IconButton
                   tooltip="Clear Form"
                   onClick={() => {
@@ -253,6 +257,7 @@ export function FormBuilder() {
           ) : null}
         </div>
       </div>
+      <Outlet />
     </DndContext>
   );
 }

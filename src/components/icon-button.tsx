@@ -5,23 +5,26 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { type ButtonProps } from '@/components/ui/button';
-import { type ComponentProps } from 'react';
+import { forwardRef, type ComponentProps } from 'react';
 
 interface IconButtonProps extends ButtonProps {
   tooltip?: string;
   Icon: ComponentProps<'svg'> & React.FC;
 }
 
-export function IconButton({
-  tooltip,
-  Icon,
-  size = 'icon',
-  variant = 'outline',
-  ...props
-}: IconButtonProps) {
+export const IconButton = forwardRef(function IconButton(
+  {
+    tooltip,
+    Icon,
+    size = 'icon',
+    variant = 'outline',
+    ...props
+  }: IconButtonProps,
+  ref: React.Ref<HTMLButtonElement>,
+) {
   if (!tooltip) {
     return (
-      <Button size={size} variant={variant} {...props}>
+      <Button ref={ref} size={size} variant={variant} {...props}>
         <Icon />
       </Button>
     );
@@ -30,7 +33,7 @@ export function IconButton({
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button size={size} variant={variant} {...props}>
+        <Button ref={ref} size={size} variant={variant} {...props}>
           <Icon />
         </Button>
       </TooltipTrigger>
@@ -39,4 +42,4 @@ export function IconButton({
       </TooltipContent>
     </Tooltip>
   );
-}
+});

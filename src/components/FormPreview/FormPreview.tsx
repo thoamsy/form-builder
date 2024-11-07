@@ -6,6 +6,13 @@ import { Form } from '@/components/ui/form';
 import { RenderField } from './RenderField';
 import { useFormValidation } from '@/hooks/useFormValidation';
 import { toast } from 'sonner';
+import {
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerFooter,
+} from '@/components/ui/drawer';
 
 export function FormPreview() {
   const { formId } = useParams<{ formId: string }>();
@@ -35,20 +42,31 @@ export function FormPreview() {
   }
 
   return (
-    <div className="container py-6 mx-auto max-w-lg px-4">
-      <h1 className="mb-2 text-3xl font-bold">{form.title}</h1>
-      {form.description && (
-        <p className="mb-6 text-muted-foreground">{form.description}</p>
-      )}
+    <DrawerContent>
+      <div className="mx-auto w-full max-w-lg">
+        <DrawerHeader>
+          <DrawerTitle>{form.title}</DrawerTitle>
+          {form.description && (
+            <DrawerDescription>{form.description}</DrawerDescription>
+          )}
+        </DrawerHeader>
 
-      <Form {...formHook}>
-        <form onSubmit={formHook.handleSubmit(onSubmit)} className="space-y-6">
-          {form.fields.map((field) => (
-            <RenderField key={field.id} field={field} form={formHook} />
-          ))}
-          <Button type="submit">Submit</Button>
-        </form>
-      </Form>
-    </div>
+        <div className="p-4">
+          <Form {...formHook}>
+            <form
+              onSubmit={formHook.handleSubmit(onSubmit)}
+              className="space-y-6"
+            >
+              {form.fields.map((field) => (
+                <RenderField key={field.id} field={field} form={formHook} />
+              ))}
+              <DrawerFooter>
+                <Button type="submit">Submit</Button>
+              </DrawerFooter>
+            </form>
+          </Form>
+        </div>
+      </div>
+    </DrawerContent>
   );
 }

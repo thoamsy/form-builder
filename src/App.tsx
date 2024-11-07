@@ -1,4 +1,10 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Outlet,
+  Link,
+} from 'react-router-dom';
 import { FormBuilder } from '@/components/FormBuilder/FormBuilder';
 import { FormPreview } from '@/components/FormPreview/FormPreview';
 import { Button } from '@/components/ui/button';
@@ -7,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import Test from './pages/Test';
 import { Toaster } from 'sonner';
+import { DrawerLayout } from './DrawerLayout';
 
 function Home() {
   const navigate = useNavigate();
@@ -27,6 +34,7 @@ function Home() {
           Create New Form
         </Button>
       </div>
+      <Outlet />
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {forms.map((form) => (
@@ -46,12 +54,8 @@ function Home() {
               >
                 Edit
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate(`/preview/${form.id}`)}
-              >
-                Preview
+              <Button variant="outline" size="sm">
+                <Link to={`/${form.id}/preview`}>Preview</Link>
               </Button>
               <Button
                 onClick={() => {
@@ -78,10 +82,15 @@ function App() {
       <div className="h-screen mx-auto">
         <Router>
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/builder/:formId" element={<FormBuilder />} />
-            <Route path="/preview/:formId" element={<FormPreview />} />
-            <Route path="/test" element={<Test />} />
+            <Route element={<DrawerLayout />}>
+              <Route path="/" element={<Home />}>
+                <Route path=":formId/preview" element={<FormPreview />} />
+              </Route>
+              <Route path="builder/:formId" element={<FormBuilder />}>
+                <Route path="preview" element={<FormPreview />} />
+              </Route>
+              <Route path="/test" element={<Test />} />
+            </Route>
           </Routes>
         </Router>
       </div>
