@@ -10,7 +10,7 @@ import { Toaster } from 'sonner';
 
 function Home() {
   const navigate = useNavigate();
-  const { forms, addForm } = useFormStore();
+  const { forms, addForm, deleteForm } = useFormStore();
 
   const handleCreateForm = () => {
     const title = `New Form ${forms.length + 1}`;
@@ -52,6 +52,16 @@ function Home() {
                 onClick={() => navigate(`/preview/${form.id}`)}
               >
                 Preview
+              </Button>
+              <Button
+                onClick={() => {
+                  deleteForm(form.id);
+                }}
+                className="ml-auto"
+                variant="destructive"
+                size="sm"
+              >
+                Delete
               </Button>
             </div>
           </div>
