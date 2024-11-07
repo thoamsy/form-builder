@@ -6,6 +6,7 @@ import { useFormStore } from '@/store/formStore';
 import { useNavigate } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import Test from './pages/Test';
+import { Toaster } from 'sonner';
 
 function Home() {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ function Home() {
   };
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto py-6">
       <div className="flex mb-6 items-center justify-between">
         <h1 className="text-3xl font-bold">My Forms</h1>
         <Button onClick={handleCreateForm}>
@@ -63,6 +64,7 @@ function Home() {
 function App() {
   return (
     <div className="w-dvw h-dvh">
+      <Toaster />
       <div className="h-screen mx-auto">
         <Router>
           <Routes>
