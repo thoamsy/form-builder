@@ -21,10 +21,15 @@ export function RadioGroupFieldRenderer({
       control={form.control}
       name={fieldConfig.id}
       render={({ field }) => (
-        <FormItem className="space-y-3">
-          <FormLabel>
-            {fieldConfig.required && '*'} {fieldConfig.label}
-          </FormLabel>
+        <FormItem className="space-y-1">
+          <div>
+            <FormLabel>
+              {fieldConfig.required && '*'} {fieldConfig.label}
+            </FormLabel>
+            {fieldConfig.description && (
+              <FormDescription>{fieldConfig.description}</FormDescription>
+            )}
+          </div>
           <FormControl>
             <RadioGroup
               onValueChange={field.onChange}
@@ -37,14 +42,13 @@ export function RadioGroupFieldRenderer({
               {fieldConfig.options?.map((option) => (
                 <div key={option.value} className="flex items-center space-x-2">
                   <RadioGroupItem value={option.value} id={option.value} />
-                  <Label htmlFor={option.value}>{option.label}</Label>
+                  <Label className="font-normal" htmlFor={option.value}>
+                    {option.label}
+                  </Label>
                 </div>
               ))}
             </RadioGroup>
           </FormControl>
-          {fieldConfig.description && (
-            <FormDescription>{fieldConfig.description}</FormDescription>
-          )}
           <FormMessage />
         </FormItem>
       )}

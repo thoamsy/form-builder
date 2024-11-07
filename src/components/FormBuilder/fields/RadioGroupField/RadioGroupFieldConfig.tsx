@@ -20,8 +20,8 @@ export function RadioGroupFieldConfig({
 }: FieldConfigProps<RadioGroupFieldProps>) {
   const addOption = () => {
     const newOption: RadioOption = {
-      label: `Option ${field.options.length + 1}`,
-      value: `option-${field.options.length + 1}`,
+      label: `Radio ${field.options.length + 1}`,
+      value: `radio-${field.options.length + 1}`,
     };
     onUpdate({ options: [...field.options, newOption] });
   };

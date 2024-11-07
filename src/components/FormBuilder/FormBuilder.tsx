@@ -27,6 +27,7 @@ import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { DROP_ZONE_ID } from '@/lib/constants';
 import type { FieldDefinition } from './fields/types';
 import type { BaseFieldProps } from './fields/types';
+import { Separator } from '@/components/ui/separator';
 
 const isDraggingFromPalette = (id: string) =>
   String(id).startsWith(DRAGGABLE_ITEM_ID);
@@ -241,11 +242,14 @@ export function FormBuilder() {
         <div className="col-span-3 sticky top-0 overflow-y-auto">
           <FormSettings formId={form.id} />
           {selectedField ? (
-            <FieldSettings
-              formId={form.id}
-              field={selectedField}
-              onClose={() => setSelectedFieldId(null)}
-            />
+            <>
+              <Separator />
+              <FieldSettings
+                formId={form.id}
+                field={selectedField}
+                onClose={() => setSelectedFieldId(null)}
+              />
+            </>
           ) : null}
         </div>
       </div>

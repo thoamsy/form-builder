@@ -40,14 +40,13 @@ function DraggableFieldButton({
       ref={setNodeRef}
       variant="outline"
       onClick={onClick}
-      className={cn('h-20 relative flex-col gap-2 touch-none')}
-      // onMouseDown={handleMouseDown}
+      className={cn('h-20 group relative flex-col gap-2 touch-none')}
     >
       <GripVertical
         {...attributes}
         {...listeners}
         className={cn(
-          '!size-7 touch-none cursor-grab p-1 rounded hover:bg-card text-muted-foreground absolute top-2 right-2',
+          '!size-7 touch-none cursor-grab p-1 rounded group-hover:bg-card text-muted-foreground absolute top-2 right-2',
 
           isDragging && 'cursor-grabbing',
         )}

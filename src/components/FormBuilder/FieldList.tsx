@@ -26,7 +26,7 @@ interface FieldListProps {
 const renderDraggingPlaceholder = (id: string, formHook: any) => {
   if (id.startsWith(DRAGGABLE_ITEM_ID)) {
     return (
-      <div className="w-full cursor-grabbing p-4 bg-inherit opacity-60 border shadow-lg">
+      <div className="w-full cursor-grabbing p-4 bg-inherit opacity-75 border shadow-lg">
         <Form {...formHook}>
           <RenderField
             field={{
@@ -80,7 +80,7 @@ export const FieldList = forwardRef<HTMLDivElement, FieldListProps>(
       <div
         ref={setRefs}
         className={cn(
-          'transition-colors space-y-6 p-4 min-h-[600px] duration-200',
+          'transition-colors space-y-6 min-h-[600px] duration-200',
           isDraggingFromPalette && !isOver && 'bg-muted/50',
           isOver &&
             form.fields.length === 0 &&

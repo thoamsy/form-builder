@@ -1,6 +1,6 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { GripVertical, TrashIcon } from 'lucide-react';
 import type { FormField } from '@/types/form';
 import { cn } from '@/lib/utils';
@@ -44,7 +44,7 @@ export function DraggableField({
     <TooltipProvider delayDuration={300}>
       <Card
         className={cn(
-          'relative flex flex-col transition-shadow duration-200',
+          'relative group p-4 flex flex-col transition-shadow duration-200',
           isDragging && 'z-50 shadow-xl opacity-80 !ring-0',
           isSelected && 'ring-2 ring-blue-400',
           className,
@@ -52,32 +52,24 @@ export function DraggableField({
         style={style}
         onClick={onClick}
       >
-        <CardHeader className="flex flex-row items-center">
-          <div className="flex items-center flex-1">
-            <div>
-              <p className="font-medium">{field.label}</p>
-              <p className="text-sm text-muted-foreground">{field.type}</p>
-            </div>
+        <div className="flex-1">{children}</div>
+        <menu className="flex bg-muted rounded-lg px-1 z-10 absolute opacity-0 group-hover:opacity-100 transition-opacity duration-200 gap-1 items-center top-1 right-1">
+          <IconButton
+            variant="ghost"
+            className="size-7 text-muted-foreground"
+            tooltip="remove"
+            Icon={TrashIcon}
+            onClick={onRemove}
+          />
+          <div
+            ref={setNodeRef}
+            className="p-1.5 rounded-md hover:bg-muted cursor-grab active:cursor-grabbing hover:text-primary"
+            {...listeners}
+            {...attributes}
+          >
+            <GripVertical className="h-5 w-5 text-muted-foreground" />
           </div>
-          <div className="flex gap-1 items-center">
-            <IconButton
-              variant="ghost"
-              className="size-7 text-muted-foreground"
-              tooltip="remove"
-              Icon={TrashIcon}
-              onClick={onRemove}
-            />
-            <div
-              ref={setNodeRef}
-              className="p-1.5 rounded-md hover:bg-muted cursor-grab active:cursor-grabbing hover:text-primary"
-              {...listeners}
-              {...attributes}
-            >
-              <GripVertical className="h-5 w-5 text-muted-foreground" />
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>{children}</CardContent>
+        </menu>
       </Card>
     </TooltipProvider>
   );
