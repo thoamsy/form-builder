@@ -20,9 +20,16 @@ export function FormPreview() {
   }
 
   function onSubmit(data: z.infer<typeof validationSchema>) {
+    const formattedData = Object.fromEntries(
+      Object.entries(data).map(([id, value]) => {
+        const field = form!.fields.find((f) => f.id === id);
+        return [field?.label ?? 'Unknown Field', value];
+      }),
+    );
+
     toast.success(
       <pre className="break-all whitespace-break-spaces">
-        {JSON.stringify(data, null, 2)}
+        {JSON.stringify(formattedData, null, 2)}
       </pre>,
     );
   }
