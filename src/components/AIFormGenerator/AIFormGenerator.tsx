@@ -7,16 +7,29 @@ import { useFormStore } from "@/store/formStore";
 import { Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { FormField } from "@/types/form";
+import OpenAI from "openai";
+
+let deepSeek: OpenAI | null = null;
+const getDeepseek = () => {
+  if (!deepSeek) {
+    deepSeek = new OpenAI({
+      apiKey: import.meta.env.VITE_OPENAI_API_KEY,
+      dangerouslyAllowBrowser: true,
+      baseURL: "https://api.deepseek.com",
+    });
+  }
+  return deepSeek;
+};
 
 const generateFormDescription = async (
-  description: string,
+  userDescription: string,
 ): Promise<{
   title: string;
   description?: string;
   reason?: string;
   fields: FormField[];
 }> => {
-  const prompt = `
+  const systemPrompt = `
   你是一个非常专业的 form builder，我会提供你一些我们目前支持的 Form fields，它由 JSON 来描述。接下来用户会描述他们的需求，你需要从我提供给你的几个 支持的 fields 中找出最符合他们需求的 form 的 JSON，接着我会用这个 JSON 来渲染 UI。如果你不知道如何处理用户的需求，比如用户说了一些和我们场景无关的需求，你就返回一个空的 \`[]\`
 
   下面是一个我们包含了所有 fields 的完整 JSON。
@@ -100,11 +113,13 @@ const generateFormDescription = async (
   7. Date Picker，让用户选择一个具体的日期。支持禁用过去的时间, \`disabledPastDates\`. 支持选择一个 date range: \`rangeMode\`.
 
   当你基于用户的描述创建好 JSON 后，请在基于给用户的 form 取一个简短的名字，并作为 title 这个字段返回。这个 title 最好不超过 12 个中文或者 6 个英文单词。如果实在需要额外的解释，可以放在一个 description 字段里进一步阐述。
+  `;
 
+  const userPrompt = `
   这是用户的描述:
 
   """
-  ${description}
+  ${userDescription}
   """
 
   请你基于下面这个 JSON 描述来返回结果，记住只需要返回 JSON，不要返回其他的。
@@ -115,18 +130,27 @@ const generateFormDescription = async (
   你的回答：
   `;
 
-  // TODO: Implement API call to generate form
-  // For now, we'll just simulate a delay
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  const rep = await getDeepseek().chat.completions.create({
+    model: "deepseek-chat",
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt },
+    ],
+    response_format: { type: "json_object" },
+  });
 
-  return {
-    title: "AI Generated Form",
-    description: "This is an AI-generated form.",
-    reason: "AI generated form",
-    fields: JSON.parse(
-      '{"id":"123","title":"AI Generated Form","description":"This is an AI-generated form.","fields":[]}',
-    ),
-  };
+  if (rep.choices[0].message.content) {
+    const { title, description, reason, form } = JSON.parse(rep.choices[0].message.content);
+
+    return {
+      title,
+      description,
+      reason,
+      fields: form,
+    };
+  } else {
+    throw new Error("failed to generate form");
+  }
 };
 
 export function AIFormGenerator() {
@@ -153,6 +177,7 @@ export function AIFormGenerator() {
       setIsOpen(false);
       navigate(`/builder/${newForm.id}`);
     } catch (error) {
+      console.log(error);
       toast.error("Failed to generate form. Please try again.");
     } finally {
       setIsGenerating(false);
