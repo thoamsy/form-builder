@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
+import { Outlet, useNavigate, useParams } from 'react-router';
 import { useFormStore } from '@/store/formStore';
 import { FieldList } from './FieldList';
 import { DRAGGABLE_ITEM_ID, FieldPalette } from './FieldPalette';
@@ -31,7 +31,7 @@ import { Separator } from '@/components/ui/separator';
 const isDraggingFromPalette = (id: string) =>
   String(id).startsWith(DRAGGABLE_ITEM_ID);
 
-export function FormBuilder() {
+export default function FormBuilder() {
   const { formId } = useParams<{ formId: string }>();
   const form = useFormStore((state) =>
     state.forms.find((f) => f.id === formId),

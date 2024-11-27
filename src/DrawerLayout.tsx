@@ -1,8 +1,8 @@
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router';
 import { Drawer } from '@/components/ui/drawer';
 import { useEffect, useState } from 'react';
 
-export const DrawerLayout = () => {
+const DrawerLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
@@ -23,3 +23,5 @@ export const DrawerLayout = () => {
     </Drawer>
   );
 };
+
+export default DrawerLayout;

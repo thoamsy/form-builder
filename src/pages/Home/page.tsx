@@ -1,21 +1,10 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Outlet,
-  Link,
-} from 'react-router-dom';
+import { AIFormGenerator } from '../../components/AIFormGenerator/AIFormGenerator';
 import { Button } from '@/components/ui/button';
 import { useFormStore } from '@/store/formStore';
-import { useNavigate } from 'react-router-dom';
 import { Plus } from 'lucide-react';
-import { Toaster } from 'sonner';
-import { DrawerLayout } from './DrawerLayout';
-import { AIFormGenerator } from './components/AIFormGenerator/AIFormGenerator';
-import { FormBuilder } from './pages/FormBuilder/FormBuilder';
-import { FormPreview } from './pages/FormPreview/FormPreview';
+import { Outlet, Link, useNavigate } from 'react-router';
 
-function Home() {
+export default function Home() {
   const navigate = useNavigate();
   const { forms, addForm, deleteForm } = useFormStore();
 
@@ -78,28 +67,3 @@ function Home() {
     </div>
   );
 }
-
-function App() {
-  return (
-    <div className="h-dvh w-dvw">
-      <Toaster />
-      <div className="mx-auto h-screen">
-        <Router>
-          <Routes>
-            <Route element={<DrawerLayout />}>
-              <Route path="/" element={<Home />}>
-                <Route path=":formId/preview" element={<FormPreview />} />
-              </Route>
-
-              <Route path="builder/:formId" element={<FormBuilder />}>
-                <Route path="preview" element={<FormPreview />} />
-              </Route>
-            </Route>
-          </Routes>
-        </Router>
-      </div>
-    </div>
-  );
-}
-
-export default App;

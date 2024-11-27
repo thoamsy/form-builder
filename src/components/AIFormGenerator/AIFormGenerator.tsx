@@ -1,15 +1,19 @@
-import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { useFormStore } from "@/store/formStore";
-import { Loader2, Sparkles } from "lucide-react";
-import { toast } from "sonner";
-import { generateFormStream as generateFormGenerator } from "@/lib/generateFormStream";
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { useFormStore } from '@/store/formStore';
+import { Loader2, Sparkles } from 'lucide-react';
+import { toast } from 'sonner';
+import { generateFormStream as generateFormGenerator } from '@/lib/generateFormStream';
 
 export function AIFormGenerator() {
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
@@ -21,7 +25,7 @@ export function AIFormGenerator() {
 
   const handleGenerate = async () => {
     if (!description.trim()) {
-      toast.error("Please provide a description for your form");
+      toast.error('Please provide a description for your form');
       return;
     }
 
@@ -29,7 +33,7 @@ export function AIFormGenerator() {
     generationStateRef.current = { shouldNavigate: true };
     try {
       for await (const value of generateFormGenerator(description)) {
-        if (value.type === "metadata") {
+        if (value.type === 'metadata') {
           const form = addForm(value.title, value.description);
           generationStateRef.current.formId = form.id;
 
@@ -37,16 +41,19 @@ export function AIFormGenerator() {
           if (generationStateRef.current.shouldNavigate) {
             navigate(`/builder/${form.id}`);
           }
-        } else if (value.type === "field" && generationStateRef.current.formId) {
+        } else if (
+          value.type === 'field' &&
+          generationStateRef.current.formId
+        ) {
           addField(generationStateRef.current.formId, value.fieldData);
         }
       }
 
-      toast.success("Form generated successfully!");
+      toast.success('Form generated successfully!');
       setIsOpen(false);
     } catch (error) {
       console.log(error);
-      toast.error("Failed to generate form. Please try again.");
+      toast.error('Failed to generate form. Please try again.');
     } finally {
       setIsGenerating(false);
     }
@@ -86,14 +93,20 @@ export function AIFormGenerator() {
               size="sm"
               onClick={() => {
                 setIsOpen(false);
-                setDescription("");
+                setDescription('');
               }}
             >
               Cancel
             </Button>
-            <Button size="sm" onClick={handleGenerate} disabled={isGenerating || !description}>
-              {isGenerating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isGenerating ? "Generating..." : "Generate Form"}
+            <Button
+              size="sm"
+              onClick={handleGenerate}
+              disabled={isGenerating || !description}
+            >
+              {isGenerating && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              {isGenerating ? 'Generating...' : 'Generate Form'}
             </Button>
           </div>
         </div>
