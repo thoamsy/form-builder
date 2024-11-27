@@ -6,7 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useFormStore } from "@/store/formStore";
 import { Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
-import { generateFormStream } from "@/lib/generateFormStream";
+import { generateFormStream as generateFormGenerator } from "@/lib/generateFormStream";
 
 export function AIFormGenerator() {
   const [description, setDescription] = useState("");
@@ -28,14 +28,7 @@ export function AIFormGenerator() {
     setIsGenerating(true);
     generationStateRef.current = { shouldNavigate: true };
     try {
-      const stream = generateFormStream(description);
-      const reader = stream.getReader();
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-
-        console.log(value);
-
+      for await (const value of generateFormGenerator(description)) {
         if (value.type === "metadata") {
           const form = addForm(value.title, value.description);
           generationStateRef.current.formId = form.id;

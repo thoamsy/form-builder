@@ -1,14 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
-import { useFormStore } from '@/store/formStore';
-import { FieldList } from './FieldList';
-import { DRAGGABLE_ITEM_ID, FieldPalette } from './FieldPalette';
-import { FormSettings } from './FormSettings';
-import { FieldSettings } from './FieldSettings';
-import { Eye, ListRestart } from 'lucide-react';
-import type { FormField } from '@/types/form';
-import { IconButton } from '../icon-button';
-import { TooltipProvider } from '@/components/ui/tooltip';
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { useFormStore } from "@/store/formStore";
+import { FieldList } from "./FieldList";
+import { DRAGGABLE_ITEM_ID, FieldPalette } from "./FieldPalette";
+import { FormSettings } from "./FormSettings";
+import { FieldSettings } from "./FieldSettings";
+import { Eye, ListRestart } from "lucide-react";
+import type { FormField } from "@/types/form";
+import { IconButton } from "../icon-button";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import {
   DndContext,
   DragStartEvent,
@@ -19,24 +19,20 @@ import {
   useSensors,
   closestCorners,
   type DragOverEvent,
-} from '@dnd-kit/core';
-import { restrictToWindowEdges } from '@dnd-kit/modifiers';
-import { getFieldDefinition, type FieldTypes } from './fields/registry';
-import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
-import { DROP_ZONE_ID } from '@/lib/constants';
-import type { FieldDefinition } from './fields/types';
-import type { BaseFieldProps } from './fields/types';
-import { Separator } from '@/components/ui/separator';
-import { Drawer, DrawerTrigger } from '../ui/drawer';
+} from "@dnd-kit/core";
+import { restrictToWindowEdges } from "@dnd-kit/modifiers";
+import { getFieldDefinition, type FieldTypes } from "./fields/registry";
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { DROP_ZONE_ID } from "@/lib/constants";
+import type { FieldDefinition } from "./fields/types";
+import type { BaseFieldProps } from "./fields/types";
+import { Separator } from "@/components/ui/separator";
 
-const isDraggingFromPalette = (id: string) =>
-  String(id).startsWith(DRAGGABLE_ITEM_ID);
+const isDraggingFromPalette = (id: string) => String(id).startsWith(DRAGGABLE_ITEM_ID);
 
 export function FormBuilder() {
   const { formId } = useParams<{ formId: string }>();
-  const form = useFormStore((state) =>
-    state.forms.find((f) => f.id === formId),
-  );
+  const form = useFormStore((state) => state.forms.find((f) => f.id === formId));
   const setActiveForm = useFormStore((state) => state.setActiveForm);
   const clearFields = useFormStore((state) => state.clearFields);
   const reorderFields = useFormStore((state) => state.reorderFields);
@@ -78,10 +74,7 @@ export function FormBuilder() {
 
     if (over.id === active.id) return;
 
-    if (
-      (activeId && isInFieldLists(String(over.id))) ||
-      over.id === DROP_ZONE_ID
-    ) {
+    if ((activeId && isInFieldLists(String(over.id))) || over.id === DROP_ZONE_ID) {
       setOverItemId(String(over.id));
     } else {
       setOverItemId(null);
@@ -95,8 +88,8 @@ export function FormBuilder() {
     // 放在下一次 loop 执行
     requestAnimationFrame(() => {
       fieldListRef.current?.lastElementChild?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'end',
+        behavior: "smooth",
+        block: "end",
       });
     });
 
@@ -118,15 +111,10 @@ export function FormBuilder() {
 
     if (!form || !over) return;
 
-    const isDraggingFromPalette = String(active.id).startsWith(
-      DRAGGABLE_ITEM_ID,
-    );
+    const isDraggingFromPalette = String(active.id).startsWith(DRAGGABLE_ITEM_ID);
     // Handle dropping a new field from palette
     if (isDraggingFromPalette) {
-      const fieldType = String(active.id).replace(
-        DRAGGABLE_ITEM_ID + '-',
-        '',
-      ) as FieldTypes;
+      const fieldType = String(active.id).replace(DRAGGABLE_ITEM_ID + "-", "") as FieldTypes;
       const fieldDef = getFieldDefinition(fieldType);
 
       // 计算拖拽位置
@@ -157,10 +145,7 @@ export function FormBuilder() {
     }
 
     // Handle reordering existing fields
-    if (
-      isInFieldLists(String(active.id)) &&
-      String(active.id) !== String(over.id)
-    ) {
+    if (isInFieldLists(String(active.id)) && String(active.id) !== String(over.id)) {
       const oldIndex = form.fields.findIndex((f) => f.id === active.id);
       const newIndex = form.fields.findIndex((f) => f.id === over.id);
       if (oldIndex !== -1 && newIndex !== -1) {
@@ -202,24 +187,22 @@ export function FormBuilder() {
       onDragEnd={handleDragEnd}
       modifiers={[restrictToWindowEdges]}
     >
-      <div className="grid grid-cols-12 h-screen relative">
-        <div className="col-span-3 sticky overflow-y-auto top-0">
+      <div className="relative grid h-screen grid-cols-12">
+        <div className="sticky top-0 col-span-3 overflow-y-auto">
           <FieldPalette onClick={onPaletteClick} />
         </div>
 
-        <div className="col-span-6 bg-gray-50 h-full p-6 overflow-y-auto">
+        <div className="col-span-6 h-full overflow-y-auto bg-gray-50 p-6">
           <div className="mb-6 flex items-start justify-between">
             <div>
               <h1 className="text-3xl font-bold">{form.title}</h1>
-              {form.description && (
-                <p className="text-muted-foreground">{form.description}</p>
-              )}
+              {form.description && <p className="text-muted-foreground">{form.description}</p>}
             </div>
             <menu className="inline-flex items-center gap-2">
               <TooltipProvider delayDuration={300}>
                 <IconButton
                   tooltip="Preview Form"
-                  onClick={() => navigate('./preview', { relative: 'path' })}
+                  onClick={() => navigate("./preview", { relative: "path" })}
                   Icon={Eye}
                 />
                 <IconButton
@@ -239,20 +222,16 @@ export function FormBuilder() {
             form={form}
             onFieldSelect={handleFieldSelect}
             selectedFieldId={selectedFieldId}
-            draggingIdFromPalette={activeId ?? ''}
+            draggingIdFromPalette={activeId ?? ""}
           />
         </div>
 
-        <div className="col-span-3 sticky top-0 overflow-y-auto">
+        <div className="sticky top-0 col-span-3 overflow-y-auto">
           <FormSettings formId={form.id} />
           {selectedField ? (
             <>
               <Separator />
-              <FieldSettings
-                formId={form.id}
-                field={selectedField}
-                onClose={() => setSelectedFieldId(null)}
-              />
+              <FieldSettings formId={form.id} field={selectedField} onClose={() => setSelectedFieldId(null)} />
             </>
           ) : null}
         </div>

@@ -44,10 +44,8 @@ function isValidFormLine(json: any): json is FormLine {
   return false;
 }
 
-export const generateFormStream = (userDescription: string): ReadableStream<FormLine> => {
-  return new ReadableStream({
-    async start(controller) {
-      const systemPrompt = `
+export async function* generateFormStream(userDescription: string) {
+  const systemPrompt = `
     你是一个非常专业的 form builder，我会提供你一些我们目前支持的 Form fields，它由 JSON 来描述。接下来用户会描述他们的需求，你需要从我提供给你的几个 支持的 fields 中找出最符合他们需求的 form 的 JSON，接着我会用这个 JSON 来渲染 UI。如果你不知道如何处理用户的需求，比如用户说了一些和我们场景无关的需求，你就返回一个空的 \`[]\`
 
     下面是一个我们包含了所有 fields 的完整 JSON。
@@ -143,7 +141,7 @@ export const generateFormStream = (userDescription: string): ReadableStream<Form
     4. 第一行必须是metadata类型
     `;
 
-      const userPrompt = `
+  const userPrompt = `
     这是用户的描述:
 
     """
@@ -153,71 +151,66 @@ export const generateFormStream = (userDescription: string): ReadableStream<Form
     你的回答：
     `;
 
-      const handleJSONLine = (line: string) => {
-        const json = JSON.parse(line);
+  const handleJSONLine = (line: string): FormLine => {
+    const json = JSON.parse(line);
 
-        if (json.type === "metadata") {
-          controller.enqueue({
-            type: "metadata",
-            title: json.title,
-            description: json.description,
-          });
-        } else if (json.type === "field") {
-          const { type: _type, ...rest } = json;
-          controller.enqueue({
-            type: "field",
-            fieldData: {
-              ...rest,
-              type: json.fieldType,
-            } as FormField,
-          });
-        }
+    if (json.type === "metadata") {
+      return {
+        type: "metadata",
+        title: json.title,
+        description: json.description,
       };
+    } else if (json.type === "field") {
+      const { type: _type, ...rest } = json;
+      return {
+        type: "field",
+        fieldData: {
+          ...rest,
+          type: json.fieldType,
+        } as FormField,
+      };
+    } else {
+      throw new Error(`Invalid JSON line: ${line}`);
+    }
+  };
+
+  const stream = await getDeepseek().chat.completions.create({
+    model: "deepseek-chat",
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt },
+    ],
+    stream: true,
+  });
+
+  let buffer = "";
+  for await (const chunk of stream) {
+    const content = chunk.choices[0]?.delta?.content || "";
+    buffer += content;
+
+    const lines = buffer.split("\n");
+    buffer = lines.pop() || "";
+
+    for (const line of lines) {
+      const trimmedLine = line.trim();
+      if (!trimmedLine) continue;
 
       try {
-        const stream = await getDeepseek().chat.completions.create({
-          model: "deepseek-chat",
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: userPrompt },
-          ],
-          stream: true,
-        });
-
-        let buffer = "";
-        for await (const chunk of stream) {
-          const content = chunk.choices[0]?.delta?.content || "";
-          buffer += content;
-
-          const lines = buffer.split("\n");
-          buffer = lines.pop() || "";
-
-          for (const line of lines) {
-            const trimmedLine = line.trim();
-            if (!trimmedLine) continue;
-
-            try {
-              handleJSONLine(trimmedLine);
-            } catch (e) {
-              console.warn("Invalid JSON line:", trimmedLine);
-              // 可以选择记录错误但继续处理
-              continue;
-            }
-          }
-        }
-
-        if (buffer.trim()) {
-          try {
-            handleJSONLine(buffer.trim());
-          } catch (e) {
-            console.warn("Failed to parse final buffer:", buffer);
-          }
-        }
-
-        controller.close();
-      } catch (error) {
-        controller.error(error);
+        yield handleJSONLine(trimmedLine);
+      } catch (e) {
+        console.warn("Invalid JSON line:", trimmedLine);
+        console.log(e.message);
+        // 可以选择记录错误但继续处理
+        continue;
       }
-    },
-  });
-};
+    }
+  }
+
+  if (buffer.trim()) {
+    try {
+      yield handleJSONLine(buffer.trim());
+    } catch {
+      console.warn("Failed to parse final buffer:", buffer);
+    }
+  }
+}

@@ -1,5 +1,5 @@
 import { create, type StateCreator } from "zustand";
-import { createJSONStorage, persist, type StateStorage } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 import { produce } from "immer";
 import { v4 as uuidv4 } from "uuid";
 import type { Form, FormField } from "@/types/form";
@@ -24,14 +24,6 @@ interface FormActions {
 }
 
 type FormStore = FormState & FormActions;
-
-type FormStorePersist = (
-  config: StateCreator<FormStore, [], []>,
-  options: {
-    name: string;
-    storage?: StateStorage;
-  },
-) => StateCreator<FormStore, [], []>;
 
 const storeCreator: StateCreator<FormStore, [], []> = (set) => ({
   forms: [],
