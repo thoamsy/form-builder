@@ -5,16 +5,15 @@ import {
   Outlet,
   Link,
 } from 'react-router-dom';
-import { FormPreview } from '@/components/FormPreview/FormPreview';
 import { Button } from '@/components/ui/button';
 import { useFormStore } from '@/store/formStore';
 import { useNavigate } from 'react-router-dom';
 import { Plus } from 'lucide-react';
-import Test from './pages/Test';
 import { Toaster } from 'sonner';
 import { DrawerLayout } from './DrawerLayout';
 import { AIFormGenerator } from './components/AIFormGenerator/AIFormGenerator';
-import { FormBuilder } from './components/FormBuilder/FormBuilder';
+import { FormBuilder } from './pages/FormBuilder/FormBuilder';
+import { FormPreview } from './pages/FormPreview/FormPreview';
 
 function Home() {
   const navigate = useNavigate();
@@ -96,7 +95,6 @@ function App() {
                 <Route path="preview" element={<FormPreview />} />
               </Route>
             </Route>
-            <Route path="/test" element={<Test />} />
           </Routes>
         </Router>
       </div>

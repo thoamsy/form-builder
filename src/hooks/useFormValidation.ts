@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Form } from '@/types/form';
-import { getFieldDefinition } from '@/components/FormBuilder/fields/registry';
+import { getFieldDefinition } from '@/pages/FormBuilder/fields/registry';
 
 export function useFormValidation(form: Form | undefined | null) {
   const validationSchema = useMemo(() => {

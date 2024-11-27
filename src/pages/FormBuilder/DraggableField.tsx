@@ -4,8 +4,8 @@ import { Card } from '@/components/ui/card';
 import { GripVertical, TrashIcon } from 'lucide-react';
 import type { FormField } from '@/types/form';
 import { cn } from '@/lib/utils';
-import { IconButton } from '../icon-button';
-import { TooltipProvider } from '@radix-ui/react-tooltip';
+import { IconButton } from '@/components/icon-button';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 interface DraggableFieldProps {
   field: FormField;
