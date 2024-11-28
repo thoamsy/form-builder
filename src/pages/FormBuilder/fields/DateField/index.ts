@@ -28,13 +28,13 @@ export const DateField: FieldDefinition<DateFieldProps> = {
     if (field.minDate) {
       schema = schema.min(
         field.minDate,
-        `Date must be after ${field.minDate.toLocaleDateString()}`,
+        `Date must be after ${field.minDate.toLocaleDateString()}`
       );
     }
     if (field.maxDate) {
       schema = schema.max(
         field.maxDate,
-        `Date must be before ${field.maxDate.toLocaleDateString()}`,
+        `Date must be before ${field.maxDate.toLocaleDateString()}`
       );
     }
     return field.required ? schema : schema.optional();

@@ -10,7 +10,7 @@ interface FormSettingsProps {
 
 export function FormSettings({ formId }: FormSettingsProps) {
   const form = useFormStore((state) =>
-    state.forms.find((f) => f.id === formId),
+    state.forms.find((f) => f.id === formId)
   );
   const updateForm = useFormStore((state) => state.updateForm);
 

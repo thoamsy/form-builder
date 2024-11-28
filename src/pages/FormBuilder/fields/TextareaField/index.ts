@@ -30,13 +30,13 @@ export const TextareaField: FieldDefinition<TextareaFieldProps> = {
     if (field.minLength) {
       schema = schema.min(
         field.minLength,
-        `Minimum ${field.minLength} characters`,
+        `Minimum ${field.minLength} characters`
       );
     }
     if (field.maxLength) {
       schema = schema.max(
         field.maxLength,
-        `Maximum ${field.maxLength} characters`,
+        `Maximum ${field.maxLength} characters`
       );
     }
     return schema;

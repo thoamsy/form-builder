@@ -20,7 +20,7 @@ export const IconButton = forwardRef(function IconButton(
     variant = 'outline',
     ...props
   }: IconButtonProps,
-  ref: React.Ref<HTMLButtonElement>,
+  ref: React.Ref<HTMLButtonElement>
 ) {
   if (!tooltip) {
     return (

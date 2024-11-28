@@ -18,7 +18,7 @@ import {
 export default function FormPreview() {
   const { formId } = useParams<{ formId: string }>();
   const form = useFormStore((state) =>
-    state.forms.find((f) => f.id === formId),
+    state.forms.find((f) => f.id === formId)
   );
 
   const { formHook, validationSchema } = useFormValidation(form);
@@ -32,13 +32,13 @@ export default function FormPreview() {
       Object.entries(data).map(([id, value]) => {
         const field = form!.fields.find((f) => f.id === id);
         return [field?.label ?? 'Unknown Field', value];
-      }),
+      })
     );
 
     toast.success(
       <pre className="whitespace-break-spaces break-all">
         {JSON.stringify(formattedData, null, 2)}
-      </pre>,
+      </pre>
     );
   }
 

@@ -48,7 +48,7 @@ const renderDraggingPlaceholder = (id: string, formHook: any) => {
 export const FieldList = forwardRef<HTMLDivElement, FieldListProps>(
   function FieldList(
     { onFieldSelect, selectedFieldId, draggingIdFromPalette, form, overItemId },
-    ref,
+    ref
   ) {
     const { formHook } = useFormValidation(form);
     const { setNodeRef, isOver } = useDroppable({
@@ -73,7 +73,7 @@ export const FieldList = forwardRef<HTMLDivElement, FieldListProps>(
           ref.current = element;
         }
       },
-      [ref, setNodeRef],
+      [ref, setNodeRef]
     );
 
     return (
@@ -84,7 +84,7 @@ export const FieldList = forwardRef<HTMLDivElement, FieldListProps>(
           isDraggingFromPalette && !isOver && 'bg-muted/50',
           isOver &&
             form.fields.length === 0 &&
-            'bg-card/20 ring-2 ring-blue-400 rounded-lg ring-inset',
+            'bg-card/20 ring-2 ring-blue-400 rounded-lg ring-inset'
         )}
       >
         <Form {...formHook}>
@@ -128,7 +128,7 @@ export const FieldList = forwardRef<HTMLDivElement, FieldListProps>(
         </Form>
       </div>
     );
-  },
+  }
 );
 
 FieldList.displayName = 'FieldList';

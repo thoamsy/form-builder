@@ -34,7 +34,7 @@ const isDraggingFromPalette = (id: string) =>
 export default function FormBuilder() {
   const { formId } = useParams<{ formId: string }>();
   const form = useFormStore((state) =>
-    state.forms.find((f) => f.id === formId),
+    state.forms.find((f) => f.id === formId)
   );
   const setActiveForm = useFormStore((state) => state.setActiveForm);
   const clearFields = useFormStore((state) => state.clearFields);
@@ -48,14 +48,14 @@ export default function FormBuilder() {
 
   const selectedField = useMemo(
     () => form?.fields.find((f) => f.id === selectedFieldId),
-    [form?.fields, selectedFieldId],
+    [form?.fields, selectedFieldId]
   );
 
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    }),
+    })
   );
 
   function handleDragStart(event: DragStartEvent) {
@@ -118,13 +118,13 @@ export default function FormBuilder() {
     if (!form || !over) return;
 
     const isDraggingFromPalette = String(active.id).startsWith(
-      DRAGGABLE_ITEM_ID,
+      DRAGGABLE_ITEM_ID
     );
     // Handle dropping a new field from palette
     if (isDraggingFromPalette) {
       const fieldType = String(active.id).replace(
         DRAGGABLE_ITEM_ID + '-',
-        '',
+        ''
       ) as FieldTypes;
       const fieldDef = getFieldDefinition(fieldType);
 
@@ -150,7 +150,7 @@ export default function FormBuilder() {
           required: false,
           ...fieldDef.defaultProps,
         },
-        newIndex,
+        newIndex
       ); // 在正确的位置添加字段
       return;
     }

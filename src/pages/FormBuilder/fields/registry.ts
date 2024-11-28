@@ -20,7 +20,7 @@ const fieldTypes = {
 export type FieldTypes = keyof typeof fieldTypes;
 
 export const getFieldDefinition = (
-  type: string,
+  type: string
 ): FieldDefinition<BaseFieldProps> => {
   const fieldDef = fieldTypes[type as FieldTypes];
   if (!fieldDef) {

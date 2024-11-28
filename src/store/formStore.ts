@@ -1,9 +1,9 @@
-import { create, type StateCreator } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
-import { produce } from "immer";
-import { v4 as uuidv4 } from "uuid";
-import type { Form, FormField } from "@/types/form";
-import { arrayMove } from "@dnd-kit/sortable";
+import { create, type StateCreator } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import { produce } from 'immer';
+import { v4 as uuidv4 } from 'uuid';
+import type { Form, FormField } from '@/types/form';
+import { arrayMove } from '@dnd-kit/sortable';
 
 interface FormState {
   forms: Form[];
@@ -12,13 +12,24 @@ interface FormState {
 
 interface FormActions {
   addForm: (title: string, description?: string) => Form;
-  updateForm: (formId: string, updates: Partial<Omit<Form, "id" | "fields">>) => void;
+  updateForm: (
+    formId: string,
+    updates: Partial<Omit<Form, 'id' | 'fields'>>
+  ) => void;
   deleteForm: (formId: string) => void;
   setActiveForm: (formId: string) => void;
   addFields: (formId: string, fields: FormField[]) => void;
-  addField: (formId: string, field: Omit<FormField, "id">, index?: number) => FormField;
+  addField: (
+    formId: string,
+    field: Omit<FormField, 'id'>,
+    index?: number
+  ) => FormField;
   clearFields: (formId: string) => void;
-  updateField: (formId: string, fieldId: string, updates: Partial<Omit<FormField, "id" | "type">>) => void;
+  updateField: (
+    formId: string,
+    fieldId: string,
+    updates: Partial<Omit<FormField, 'id' | 'type'>>
+  ) => void;
   deleteField: (formId: string, fieldId: string) => void;
   reorderFields: (formId: string, startIndex: number, endIndex: number) => void;
 }
@@ -41,19 +52,22 @@ const storeCreator: StateCreator<FormStore, [], []> = (set) => ({
       produce((state: FormStore) => {
         state.forms.push(newForm);
         state.activeFormId = newForm.id;
-      }),
+      })
     );
     return newForm;
   },
 
-  updateForm: (formId: string, updates: Partial<Omit<Form, "id" | "fields">>) => {
+  updateForm: (
+    formId: string,
+    updates: Partial<Omit<Form, 'id' | 'fields'>>
+  ) => {
     set(
       produce((state: FormStore) => {
         const form = state.forms.find((form) => form.id === formId);
         if (form) {
           Object.assign(form, updates);
         }
-      }),
+      })
     );
   },
 
@@ -64,7 +78,7 @@ const storeCreator: StateCreator<FormStore, [], []> = (set) => ({
         if (state.activeFormId === formId) {
           state.activeFormId = null;
         }
-      }),
+      })
     );
   },
 
@@ -72,7 +86,7 @@ const storeCreator: StateCreator<FormStore, [], []> = (set) => ({
     set(
       produce((state: FormStore) => {
         state.activeFormId = formId;
-      }),
+      })
     );
   },
 
@@ -83,11 +97,15 @@ const storeCreator: StateCreator<FormStore, [], []> = (set) => ({
         if (!form) return;
 
         form.fields.push(...fields);
-      }),
+      })
     );
   },
 
-  addField: (formId: string, field: Omit<FormField, "id">, index?: number): FormField => {
+  addField: (
+    formId: string,
+    field: Omit<FormField, 'id'>,
+    index?: number
+  ): FormField => {
     const newField: FormField = {
       ...field,
       id: uuidv4(),
@@ -98,20 +116,24 @@ const storeCreator: StateCreator<FormStore, [], []> = (set) => ({
         const form = state.forms.find((f) => f.id === formId);
         if (!form) return;
 
-        if (typeof index === "number" && index >= 0) {
+        if (typeof index === 'number' && index >= 0) {
           // 在指定位置插入
           form.fields.splice(index, 0, newField);
         } else {
           // 添加到末尾
           form.fields.push(newField);
         }
-      }),
+      })
     );
 
     return newField;
   },
 
-  updateField: (formId: string, fieldId: string, updates: Partial<Omit<FormField, "id" | "type">>) => {
+  updateField: (
+    formId: string,
+    fieldId: string,
+    updates: Partial<Omit<FormField, 'id' | 'type'>>
+  ) => {
     set(
       produce((state: FormStore) => {
         const form = state.forms.find((form) => form.id === formId);
@@ -121,7 +143,7 @@ const storeCreator: StateCreator<FormStore, [], []> = (set) => ({
             Object.assign(field, updates);
           }
         }
-      }),
+      })
     );
   },
 
@@ -132,7 +154,7 @@ const storeCreator: StateCreator<FormStore, [], []> = (set) => ({
         if (form) {
           form.fields = form.fields.filter((field) => field.id !== fieldId);
         }
-      }),
+      })
     );
   },
 
@@ -143,7 +165,7 @@ const storeCreator: StateCreator<FormStore, [], []> = (set) => ({
         if (form) {
           form.fields = [];
         }
-      }),
+      })
     );
   },
 
@@ -154,18 +176,18 @@ const storeCreator: StateCreator<FormStore, [], []> = (set) => ({
         if (form) {
           form.fields = arrayMove(form.fields, oldIndex, newIndex);
         }
-      }),
+      })
     );
   },
 });
 
 export const useFormStore = create<FormStore>()(
   persist(storeCreator, {
-    name: "form-builder-storage",
+    name: 'form-builder-storage',
     storage: createJSONStorage(() => localStorage),
     partialize: (state: FormStore) => ({
       forms: state.forms,
     }),
     version: 1,
-  }),
+  })
 );

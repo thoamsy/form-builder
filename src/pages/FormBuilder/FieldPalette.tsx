@@ -48,7 +48,7 @@ function DraggableFieldButton({
         className={cn(
           'size-7! touch-none cursor-grab p-1 rounded group-hover:bg-card text-muted-foreground absolute top-2 right-2',
 
-          isDragging && 'cursor-grabbing',
+          isDragging && 'cursor-grabbing'
         )}
       />
       <Icon className="h-5 w-5" />

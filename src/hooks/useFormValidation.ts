@@ -16,7 +16,7 @@ export function useFormValidation(form: Form | undefined | null) {
           ...acc,
           [field.id]: fieldDef.createSchema(field),
         };
-      }, {}),
+      }, {})
     );
   }, [form]);
 

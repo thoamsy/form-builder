@@ -36,7 +36,7 @@ export function RadioGroupFieldRenderer({
               defaultValue={field.value}
               className={cn(
                 'gap-2',
-                fieldConfig.layout === 'horizontal' ? 'flex' : 'flex flex-col',
+                fieldConfig.layout === 'horizontal' ? 'flex' : 'flex flex-col'
               )}
             >
               {fieldConfig.options?.map((option) => (
