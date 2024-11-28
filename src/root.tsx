@@ -1,5 +1,6 @@
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
 import { Toaster } from 'sonner';
+import FormPreviewLayout from './pages/FormPreview/FormPreview';
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -24,8 +25,10 @@ export default function Root() {
   return (
     <div className="h-dvh w-dvw">
       <Toaster />
-      <div className="mx-auto h-screen">
-        <Outlet />
+      <div data-vaul-drawer-wrapper="" className="mx-auto h-screen">
+        <FormPreviewLayout>
+          <Outlet />
+        </FormPreviewLayout>
       </div>
     </div>
   );

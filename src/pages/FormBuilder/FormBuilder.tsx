@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Outlet, useNavigate, useParams } from 'react-router';
+import { Outlet, useParams } from 'react-router';
 import { useFormStore } from '@/store/formStore';
 import { FieldList } from './FieldList';
 import { DRAGGABLE_ITEM_ID, FieldPalette } from './FieldPalette';
@@ -27,6 +27,7 @@ import { DROP_ZONE_ID } from '@/lib/constants';
 import type { FieldDefinition } from './fields/types';
 import type { BaseFieldProps } from './fields/types';
 import { Separator } from '@/components/ui/separator';
+import { usePreview } from '@/hooks/usePreview';
 
 const isDraggingFromPalette = (id: string) =>
   String(id).startsWith(DRAGGABLE_ITEM_ID);
@@ -182,7 +183,13 @@ export default function FormBuilder() {
     }
   }, [selectedField]);
 
-  const navigate = useNavigate();
+  const { openPreview } = usePreview();
+
+  const handlePreviewClick = () => {
+    if (form) {
+      openPreview(form);
+    }
+  };
 
   if (!form) {
     return <div>Form not found</div>;
@@ -218,7 +225,7 @@ export default function FormBuilder() {
               <TooltipProvider delayDuration={300}>
                 <IconButton
                   tooltip="Preview Form"
-                  onClick={() => navigate('./preview', { relative: 'path' })}
+                  onClick={handlePreviewClick}
                   Icon={Eye}
                 />
                 <IconButton

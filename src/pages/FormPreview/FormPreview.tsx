@@ -1,5 +1,3 @@
-import { Outlet, useParams } from 'react-router';
-import { useFormStore } from '@/store/formStore';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
@@ -13,19 +11,18 @@ import {
   DrawerTitle,
   DrawerDescription,
   DrawerFooter,
+  Drawer,
 } from '@/components/ui/drawer';
+import { usePreviewStore } from '@/hooks/usePreview';
 
-export default function FormPreview() {
-  const { formId } = useParams<{ formId: string }>();
-  const form = useFormStore((state) =>
-    state.forms.find((f) => f.id === formId)
-  );
+export default function FormPreviewLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { isOpen, form, closePreview } = usePreviewStore();
 
   const { formHook, validationSchema } = useFormValidation(form);
-
-  if (!form) {
-    return <div>Form not found</div>;
-  }
 
   function onSubmit(data: z.infer<typeof validationSchema>) {
     const formattedData = Object.fromEntries(
@@ -43,31 +40,44 @@ export default function FormPreview() {
   }
 
   return (
-    <DrawerContent>
-      <div className="mx-auto w-full max-w-lg">
-        <DrawerHeader>
-          <DrawerTitle>{form.title}</DrawerTitle>
-          {form.description && (
-            <DrawerDescription>{form.description}</DrawerDescription>
-          )}
-        </DrawerHeader>
+    <Drawer
+      setBackgroundColorOnScale={false}
+      open={isOpen}
+      onOpenChange={(state) => {
+        if (!state) {
+          closePreview();
+        }
+      }}
+    >
+      {children}
+      <DrawerContent className="min-h-[50vh]">
+        {form && (
+          <div className="mx-auto w-full max-w-lg">
+            <DrawerHeader>
+              <DrawerTitle>{form.title}</DrawerTitle>
+              {form.description && (
+                <DrawerDescription>{form.description}</DrawerDescription>
+              )}
+            </DrawerHeader>
 
-        <Form {...formHook}>
-          <ScrollArea className="h-[50vh]">
-            <form
-              onSubmit={formHook.handleSubmit(onSubmit)}
-              className="space-y-6 px-4"
-            >
-              {form.fields.map((field) => (
-                <RenderField key={field.id} field={field} form={formHook} />
-              ))}
-              <DrawerFooter>
-                <Button type="submit">Submit</Button>
-              </DrawerFooter>
-            </form>
-          </ScrollArea>
-        </Form>
-      </div>
-    </DrawerContent>
+            <Form {...formHook}>
+              <ScrollArea className="h-[50vh]">
+                <form
+                  onSubmit={formHook.handleSubmit(onSubmit)}
+                  className="space-y-6 px-4"
+                >
+                  {form.fields.map((field) => (
+                    <RenderField key={field.id} field={field} form={formHook} />
+                  ))}
+                  <DrawerFooter>
+                    <Button type="submit">Submit</Button>
+                  </DrawerFooter>
+                </form>
+              </ScrollArea>
+            </Form>
+          </div>
+        )}
+      </DrawerContent>
+    </Drawer>
   );
 }

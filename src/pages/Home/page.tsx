@@ -1,8 +1,9 @@
+import { usePreview } from '@/hooks/usePreview';
 import { AIFormGenerator } from '../../components/AIFormGenerator/AIFormGenerator';
 import { Button } from '@/components/ui/button';
 import { useFormStore } from '@/store/formStore';
 import { Plus } from 'lucide-react';
-import { Outlet, Link, useNavigate } from 'react-router';
+import { Outlet, useNavigate } from 'react-router';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -13,6 +14,8 @@ export default function Home() {
     const newForm = addForm(title);
     navigate(`/builder/${newForm.id}`);
   };
+
+  const { openPreview } = usePreview();
 
   return (
     <div className="container mx-auto py-6">
@@ -47,8 +50,14 @@ export default function Home() {
               >
                 Edit
               </Button>
-              <Button variant="outline" size="sm">
-                <Link to={`/${form.id}/preview`}>Preview</Link>
+              <Button
+                onClick={() => {
+                  openPreview(form);
+                }}
+                variant="outline"
+                size="sm"
+              >
+                Preview
               </Button>
               <Button
                 onClick={() => {
