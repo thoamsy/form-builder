@@ -41,7 +41,10 @@ export function RadioGroupFieldRenderer({
             >
               {fieldConfig.options?.map((option) => (
                 <div key={option.value} className="flex items-center space-x-2">
-                  <RadioGroupItem value={option.value} id={option.value} />
+                  <RadioGroupItem
+                    value={option.value || 'emptyradio'}
+                    id={option.value || 'emptyradio'}
+                  />
                   <Label className="font-normal" htmlFor={option.value}>
                     {option.label}
                   </Label>

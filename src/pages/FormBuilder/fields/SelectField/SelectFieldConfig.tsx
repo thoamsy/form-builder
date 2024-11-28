@@ -6,15 +6,18 @@ import { Button } from '@/components/ui/button';
 import { Plus, X } from 'lucide-react';
 import type { FieldConfigProps } from '../types';
 import type { SelectFieldProps, SelectOption } from './index';
+import { labelToValue } from '@/lib/utils';
 
 export function SelectFieldConfig({
   field,
   onUpdate,
 }: FieldConfigProps<SelectFieldProps>) {
   const addOption = () => {
+    const label = `Option ${field.options.length + 1}`;
     const newOption: SelectOption = {
-      label: `Option ${field.options.length + 1}`,
-      value: `option-${field.options.length + 1}`,
+      label,
+      value: labelToValue(label),
+      id: crypto.randomUUID(),
     };
     onUpdate({ options: [...field.options, newOption] });
   };
@@ -28,6 +31,7 @@ export function SelectFieldConfig({
   const updateOption = (index: number, updates: Partial<SelectOption>) => {
     const newOptions = [...field.options];
     newOptions[index] = { ...newOptions[index], ...updates };
+
     onUpdate({ options: newOptions });
   };
 
@@ -68,22 +72,27 @@ export function SelectFieldConfig({
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label>Options</Label>
-          <Button type="button" variant="outline" size="sm" onClick={addOption}>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            onClick={addOption}
+          >
             <Plus className="h-4 w-4" />
           </Button>
         </div>
         <div className="space-y-2">
           {field.options.map((option, index) => (
-            <div key={index} className="flex items-center gap-2">
+            <div key={option.id} className="flex items-center gap-2">
               <Input
                 placeholder="Label"
                 value={option.label}
-                onChange={(e) => updateOption(index, { label: e.target.value })}
-              />
-              <Input
-                placeholder="Value"
-                value={option.value}
-                onChange={(e) => updateOption(index, { value: e.target.value })}
+                onChange={(e) =>
+                  updateOption(index, {
+                    label: e.target.value,
+                    value: labelToValue(e.target.value),
+                  })
+                }
               />
               <Button
                 type="button"

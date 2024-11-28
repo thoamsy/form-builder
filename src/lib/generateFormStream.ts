@@ -1,5 +1,5 @@
-import OpenAI from "openai";
-import { FormField } from "@/types/form";
+import OpenAI from 'openai';
+import { FormField } from '@/types/form';
 
 let deepSeek: OpenAI | null = null;
 const getDeepseek = () => {
@@ -7,36 +7,38 @@ const getDeepseek = () => {
     deepSeek = new OpenAI({
       apiKey: import.meta.env.VITE_OPENAI_API_KEY,
       dangerouslyAllowBrowser: true,
-      baseURL: "https://api.deepseek.com",
+      baseURL: 'https://api.deepseek.com',
     });
   }
   return deepSeek;
 };
 
 interface MetadataLine {
-  type: "metadata";
+  type: 'metadata';
   title: string;
   description: string;
 }
 
 interface FieldLine {
-  type: "field";
+  type: 'field';
   fieldData: FormField;
 }
 
 type FormLine = MetadataLine | FieldLine;
 
 function isValidFormLine(json: any): json is FormLine {
-  if (!json || typeof json !== "object") return false;
+  if (!json || typeof json !== 'object') return false;
 
-  if (json.type === "metadata") {
-    return typeof json.title === "string" && typeof json.description === "string";
+  if (json.type === 'metadata') {
+    return (
+      typeof json.title === 'string' && typeof json.description === 'string'
+    );
   }
 
-  if (json.type === "field") {
+  if (json.type === 'field') {
     return (
-      typeof json.fieldType === "string" &&
-      typeof json.label === "string" &&
+      typeof json.fieldType === 'string' &&
+      typeof json.label === 'string' &&
       (!json.options || Array.isArray(json.options))
     );
   }
@@ -67,7 +69,7 @@ export async function* generateFormStream(userDescription: string) {
             "placeholder": "Select an option...",
             "options": [
                 {
-                    "value": "option1",
+                    "value": "Option_1",
                     "label": "Option 1"
                 }
             ],
@@ -154,16 +156,16 @@ export async function* generateFormStream(userDescription: string) {
   const handleJSONLine = (line: string): FormLine => {
     const json = JSON.parse(line);
 
-    if (json.type === "metadata") {
+    if (json.type === 'metadata') {
       return {
-        type: "metadata",
+        type: 'metadata',
         title: json.title,
         description: json.description,
       };
-    } else if (json.type === "field") {
+    } else if (json.type === 'field') {
       const { type: _type, ...rest } = json;
       return {
-        type: "field",
+        type: 'field',
         fieldData: {
           ...rest,
           type: json.fieldType,
@@ -175,21 +177,21 @@ export async function* generateFormStream(userDescription: string) {
   };
 
   const stream = await getDeepseek().chat.completions.create({
-    model: "deepseek-chat",
+    model: 'deepseek-chat',
     messages: [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: userPrompt },
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt },
     ],
     stream: true,
   });
 
-  let buffer = "";
+  let buffer = '';
   for await (const chunk of stream) {
-    const content = chunk.choices[0]?.delta?.content || "";
+    const content = chunk.choices[0]?.delta?.content || '';
     buffer += content;
 
-    const lines = buffer.split("\n");
-    buffer = lines.pop() || "";
+    const lines = buffer.split('\n');
+    buffer = lines.pop() || '';
 
     for (const line of lines) {
       const trimmedLine = line.trim();
@@ -198,7 +200,7 @@ export async function* generateFormStream(userDescription: string) {
       try {
         yield handleJSONLine(trimmedLine);
       } catch (e) {
-        console.warn("Invalid JSON line:", trimmedLine);
+        console.warn('Invalid JSON line:', trimmedLine);
         console.log(e.message);
         // 可以选择记录错误但继续处理
         continue;
@@ -210,7 +212,7 @@ export async function* generateFormStream(userDescription: string) {
     try {
       yield handleJSONLine(buffer.trim());
     } catch {
-      console.warn("Failed to parse final buffer:", buffer);
+      console.warn('Failed to parse final buffer:', buffer);
     }
   }
 }

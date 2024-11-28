@@ -7,6 +7,7 @@ import type { BaseFieldProps, FieldDefinition } from '../types';
 export interface RadioOption {
   label: string;
   value: string;
+  id: string;
 }
 
 export interface RadioGroupFieldProps extends BaseFieldProps {
@@ -25,6 +26,7 @@ export const RadioGroupField: FieldDefinition<RadioGroupFieldProps> = {
       {
         value: 'radio1',
         label: 'Radio 1',
+        id: crypto.randomUUID(),
       },
     ],
     layout: 'vertical',

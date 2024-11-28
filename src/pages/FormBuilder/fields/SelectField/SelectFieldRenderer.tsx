@@ -37,7 +37,10 @@ export function SelectFieldRenderer({
             </FormControl>
             <SelectContent>
               {fieldConfig.options?.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
+                <SelectItem
+                  key={option.value}
+                  value={option.value || 'emptyselect'}
+                >
                   {option.label}
                 </SelectItem>
               ))}

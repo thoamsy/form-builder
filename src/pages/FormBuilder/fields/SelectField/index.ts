@@ -7,6 +7,7 @@ import type { BaseFieldProps, FieldDefinition } from '../types';
 export interface SelectOption {
   label: string;
   value: string;
+  id: string;
 }
 
 export interface SelectFieldProps extends BaseFieldProps {
@@ -23,8 +24,9 @@ export const SelectField: FieldDefinition<SelectFieldProps> = {
     placeholder: 'Select an option...',
     options: [
       {
-        value: 'option1',
+        value: 'Option_1',
         label: 'Option 1',
+        id: crypto.randomUUID(),
       },
     ],
   },
