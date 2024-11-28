@@ -46,7 +46,7 @@ function DraggableFieldButton({
         {...attributes}
         {...listeners}
         className={cn(
-          '!size-7 touch-none cursor-grab p-1 rounded group-hover:bg-card text-muted-foreground absolute top-2 right-2',
+          'size-7! touch-none cursor-grab p-1 rounded group-hover:bg-card text-muted-foreground absolute top-2 right-2',
 
           isDragging && 'cursor-grabbing',
         )}

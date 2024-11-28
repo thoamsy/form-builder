@@ -33,7 +33,7 @@ export default function Home() {
         {forms.map((form) => (
           <div
             key={form.id}
-            className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm"
+            className="rounded-lg border bg-card p-4 text-card-foreground shadow-xs"
           >
             <h2 className="text-xl font-semibold">{form.title}</h2>
             <p className="mb-4 text-sm text-muted-foreground">
